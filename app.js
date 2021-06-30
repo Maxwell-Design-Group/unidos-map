@@ -469,7 +469,7 @@ map.on("load", function() {
                     '<hr></br><h2 style="text-align: left; margin-left: 10px; font-weight: 700;">Representative Info</h2>' +
                     '<p style="font-weight: 700";>' + states[0].properties.rep_first_name + ' ' + states[0].properties.rep_last_name + ', ' + states[0].properties.rep_gender + '</p></br>' +
                     '<p style="font-weight: 700";>' + states[0].properties.rep_party + '</p></br>' +
-                    '<p><i class="phone-square-alt">' + states[0].properties.rep_phone + '</i></p></br>' +
+                    '<p>' + states[0].properties.rep_phone + '</p></br>' +
                     '<p>' + states[0].properties.rep_url + '</p></br>' +
                     '<hr></br>' +
                     '<h2 style="text-align: left; margin-left: 10px; font-weight: 700;">Senate Info</h2>' +
@@ -483,20 +483,21 @@ map.on("load", function() {
                     '<p>' + states[0].properties.sen_2_url + '</p></br>' +
                     '<hr></br>' +
                     '<h2 style="text-align: left; margin-left: 10px; font-weight: 700;">Donor Investment</h2>' +
-                    '<p>' + states[0].properties.donor_count + '</p></br>' +
-                    '<p>' + states[0].properties.donor_value + '</p></br>' +
+                    '<p># of Donors: ' + states[0].properties.donor_count + '</p></br>' +
+                    '<p>Total Amount Donated: ' + states[0].properties.donor_value + '</p></br>' +
                     '<hr></br>' +
                     '<h2 style="text-align: left; margin-left: 10px; font-weight: 700;">Population #</h2>' +
-                    '<p>' + states[0].properties.total_pop + '</p></br>' +
-                    '<p>' + states[0].properties.eligible_voter_pop + '</p></br>' +
-                    '<p>' + states[0].properties.latino_eligible_voter_pop + '</p></br>' +
-                    '<p>' + states[0].properties.latino_pop + '</p></br>' +
+                    '<p>Total Population: ' + states[0].properties.total_pop + '</p></br>' +
+                    '<p>Total Latino Pop.: ' + states[0].properties.latino_pop + '</p></br>' +
+                    '<p>Total Eligible Voters: ' + states[0].properties.eligible_voter_pop + '</p></br>' +
+                    '<p>Total Latino Elig. Voters: ' + states[0].properties.latino_eligible_voter_pop + '</p></br>' +
+
                     '<hr></br>' +
                     '<h2 style="text-align: left; margin-left: 10px; font-weight: 700;">Population %</h2>' +
-                    '<p>' + states[0].properties.share_latino_eligible_pop * 100 + '%</p></br>' +
-                    '<p>' + states[0].properties.share_latino_pop * 100 + '%</p></br>' +
-                    '<p>' + states[0].properties.share_latino_total_eligible_voter_pop * 100 + '%</p></br>' +
-                    '<p> Issue Area: This is one, and this is another</p>';
+                    '<p>% of Pop. Latino: ' + states[0].properties.share_latino_pop * 100 + '%</p></br>' +
+                    '<p>% of Latino Among Eligible Voters: ' + states[0].properties.share_latino_total_eligible_voter_pop * 100 + '%</p></br>' +
+                    '<p>% of Latino Pop. Eligible to Vote: ' + states[0].properties.share_latino_eligible_pop * 100 + '%</p></br>' +
+                    '<h2 style="text-align: left; margin-left: 10px; font-weight: 700;">Active Issue Areas</h2>';
             } else {
                 document.getElementsByClass("map-overlay").style.visibility = "hidden";
             }
