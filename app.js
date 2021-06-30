@@ -497,7 +497,8 @@ map.on("load", function() {
                     '<p>% of Pop. Latino: ' + states[0].properties.share_latino_pop * 100 + '%</p></br>' +
                     '<p>% of Latino Among Eligible Voters: ' + states[0].properties.share_latino_total_eligible_voter_pop * 100 + '%</p></br>' +
                     '<p>% of Latino Pop. Eligible to Vote: ' + states[0].properties.share_latino_eligible_pop * 100 + '%</p></br>' +
-                    '<h2 style="text-align: left; margin-left: 10px; font-weight: 700;">Active Issue Areas</h2>';
+                    '<h2 style="text-align: left; margin-left: 10px; font-weight: 700;">Active Issue Areas</h2>' +
+                    '<p>Advocacy & Empowerment, Civic Engagement, Leadership Development, State & Local Advocacy, Health Policy & Advocacy (Access, nutrition, & mental health), Education Policy & Advocacy (Higher Ed, K-12 and ECE), Immigration Policy & Advocacy (Public charge, DACA, TPS), Voter Registration/ GOTV, Engaged in Policy & Advocacy Work, Economy & Workforce, Charter School, Early Childhood Education, Head Start, K-12 Education, After School Programs, Summer School Programs, College Preparation, Parent Engagement, Engaged in Health work, Digital Literacy</p>';
             } else {
                 document.getElementsByClass("map-overlay").style.visibility = "hidden";
             }
