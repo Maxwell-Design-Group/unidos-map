@@ -23,15 +23,40 @@ function flyToLocation(currentFeature) {
     });
 }
 
+
 function createPopup(currentFeature) {
+
+    var description =
+        '<h3>' +
+        currentFeature.properties["affiliate_name"] +
+        '</h3>' +
+        `<h4>` +
+        `<b>` +
+        `Address: ` +
+        `</b>` +
+        currentFeature.properties["address"] + "&nbsp;" + currentFeature.properties["city"] + ",&nbsp;" + currentFeature.properties["state"] + "&nbsp;" + currentFeature.properties["zip"] +
+        `</h4>` +
+        `<h4>` +
+        `<b>` +
+        `Member ID: ` +
+        `</b>` +
+        currentFeature.properties["member_id"] +
+        `</h4>`;
+
+
     const popups = document.getElementsByClassName("mapboxgl-popup");
     /** Check if there is already a popup on the map and if so, remove it */
     if (popups[0]) popups[0].remove();
     const popup = new mapboxgl.Popup({ closeOnClick: true })
         .setLngLat(currentFeature.geometry.coordinates)
-        .setHTML("<h3>" + currentFeature.properties[config.popupInfo] + "</h3>")
+        .setHTML(description)
         .addTo(map);
+
+
 }
+
+
+
 
 function buildLocationList(locationData) {
     /* Add a new listing section to the sidebar. */
@@ -52,7 +77,7 @@ function buildLocationList(locationData) {
         link.className = "title";
         link.id = "link-" + prop.id;
         link.innerHTML =
-            '<p style="line-height: 1.25">' + prop[columnHeaders[0]] + "</p>";
+            '<h1 style="line-height: 1; text-align:left;">' + prop[columnHeaders[0]] + "</h1>";
 
         /* Add details to the individual listing. */
         const details = listing.appendChild(document.createElement("div"));
@@ -97,7 +122,6 @@ function buildLocationList(locationData) {
 }
 
 // Build dropdown list function
-// title - the name or 'category' of the selection e.g. 'Languages: '
 // defaultValue - the default option for the dropdown list
 // listItems - the array of filter items
 
@@ -136,10 +160,7 @@ function buildDropDownList(title, listItems) {
 }
 
 // Build checkbox function
-// title - the name or 'category' of the selection e.g. 'Languages: '
 // listItems - the array of filter items
-// To DO: Clean up code - for every third checkbox, create a div and append new checkboxes to it
-
 function buildCheckbox(title, listItems) {
     const filtersDiv = document.getElementById("filters");
     const mainDiv = document.createElement("div");
@@ -406,9 +427,10 @@ geocoder.on("result", function(ev) {
     sortByDistance(searchResult);
 });
 
-map.on("load", function() {
-    map.addControl(geocoder, "top-right");
+var x = document.getElementById("features")
 
+map.on("style.load", function() {
+    x.style.visibility = "hidden";
     // csv2geojson - following the Sheet Mapper tutorial https://www.mapbox.com/impact-tools/sheet-mapper
     console.log("loaded");
     $(document).ready(function() {
@@ -451,20 +473,31 @@ map.on("load", function() {
                     },
                     paint: {
                         "circle-radius": 6, // size of circles
-                        "circle-color": "#448EE4", // color of circles
+                        "circle-color": "#29602e", // color of circles
                         "circle-stroke-color": "white",
                         "circle-stroke-width": 2,
-                        "circle-opacity": 0.7,
+                        "circle-opacity": 0.9,
                     },
                 });
-            }
+            },
+            'waterway-label'
         );
+
+        function sourceCallback() {
+            if (map.getSource(geojsonData) && map.isSourceLoaded(geojsonData)) {
+                console.log('source loaded!');
+            }
+        }
+        map.on('sourcedata', sourceCallback);
+
         map.on("click", "districts-fill", function(e) {
             const states = map.queryRenderedFeatures(e.point, {
                 layers: ['districts-fill']
             });
+            x.style.visibility = "visible";
 
             if (states.length > 0) {
+
                 document.getElementById('pd').innerHTML = '<img src="user.png" alt="Avatar" class="avatar"></img><h2>District: ' + states[0].properties.district_name + '</h2>' +
                     '<hr></br><h2 style="text-align: left; margin-left: 10px; font-weight: 700;">Representative Info</h2>' +
                     '<p style="font-weight: 700";>' + states[0].properties.rep_first_name + ' ' + states[0].properties.rep_last_name + ', ' + states[0].properties.rep_gender + '</p></br>' +
@@ -496,11 +529,7 @@ map.on("load", function() {
                     '<h2 style="text-align: left; margin-left: 10px; font-weight: 700;">Population %</h2>' +
                     '<p>% of Pop. Latino: ' + states[0].properties.share_latino_pop * 100 + '%</p></br>' +
                     '<p>% of Latino Among Eligible Voters: ' + states[0].properties.share_latino_total_eligible_voter_pop * 100 + '%</p></br>' +
-                    '<p>% of Latino Pop. Eligible to Vote: ' + states[0].properties.share_latino_eligible_pop * 100 + '%</p></br>' +
-                    '<h2 style="text-align: left; margin-left: 10px; font-weight: 700;">Active Issue Areas</h2>' +
-                    '<p>Advocacy & Empowerment, Civic Engagement, Leadership Development, State & Local Advocacy, Health Policy & Advocacy (Access, nutrition, & mental health), Education Policy & Advocacy (Higher Ed, K-12 and ECE), Immigration Policy & Advocacy (Public charge, DACA, TPS), Voter Registration/ GOTV, Engaged in Policy & Advocacy Work, Economy & Workforce, Charter School, Early Childhood Education, Head Start, K-12 Education, After School Programs, Summer School Programs, College Preparation, Parent Engagement, Engaged in Health work, Digital Literacy</p>';
-            } else {
-                document.getElementsByClass("map-overlay").style.visibility = "hidden";
+                    '<p>% of Latino Pop. Eligible to Vote: ' + states[0].properties.share_latino_eligible_pop * 100 + '%</p></br>';
             }
         });
         map.on("click", "locationData", function(e) {
@@ -522,11 +551,107 @@ map.on("load", function() {
         });
         buildLocationList(geojsonData);
 
-
-
-
     }
 });
+
+var hoveredStateId = null;
+var zoomThreshold = 5.2;
+var minizoomi = 5.3;
+
+
+map.on('style.load', function() {
+    map.addSource('distro', {
+        'type': 'geojson',
+        'data': './district.geojson'
+    });
+
+    // The feature-state dependent fill-opacity expression will render the hover effect
+    // when a feature's hover state is set to true.
+    map.addLayer({
+        'id': 'district-fills',
+        'type': 'fill',
+        'source': 'distro',
+        'minzoom': zoomThreshold,
+        'layout': {},
+        'paint': {
+            'fill-color': '#212121',
+            'fill-opacity': [
+                'case', ['boolean', ['feature-state', 'hover'], false],
+                0.4,
+                0,
+            ]
+        }
+    });
+
+
+    // When the user moves their mouse over the state-fill layer, we'll update the
+    // feature state for the feature under the mouse.
+    map.on('mousemove', 'district-fills', function(e) {
+        if (e.features.length > 0) {
+            if (hoveredStateId !== null) {
+                map.setFeatureState({ source: 'distro', id: hoveredStateId }, { hover: false });
+            }
+            hoveredStateId = e.features[0].id;
+            map.setFeatureState({ source: 'distro', id: hoveredStateId }, { hover: true });
+        }
+    });
+
+    // When the mouse leaves the state-fill layer, update the feature state of the
+    // previously hovered feature.
+    map.on('mouseleave', 'district-fills', function() {
+        if (hoveredStateId !== null) {
+            map.setFeatureState({ source: 'distro', id: hoveredStateId }, { hover: false });
+        }
+        hoveredStateId = null;
+    });
+});
+
+map.on('style.load', function() {
+    map.addSource('states', {
+        'type': 'geojson',
+        'data': './states.geojson'
+    });
+
+    // The feature-state dependent fill-opacity expression will render the hover effect
+    // when a feature's hover state is set to true.
+    map.addLayer({
+        'id': 'state-fills',
+        'type': 'fill',
+        'source': 'states',
+        'maxzoom': zoomThreshold,
+        'layout': {},
+        'paint': {
+            'fill-color': '#212121',
+            'fill-opacity': [
+                'case', ['boolean', ['feature-state', 'hover'], false],
+                0.4,
+                0,
+            ]
+        }
+    });
+
+    // When the user moves their mouse over the state-fill layer, we'll update the
+    // feature state for the feature under the mouse.
+    map.on('mousemove', 'state-fills', function(e) {
+        if (e.features.length > 0) {
+            if (hoveredStateId !== null) {
+                map.setFeatureState({ source: 'states', id: hoveredStateId }, { hover: false });
+            }
+            hoveredStateId = e.features[0].id;
+            map.setFeatureState({ source: 'states', id: hoveredStateId }, { hover: true });
+        }
+    });
+
+    // When the mouse leaves the state-fill layer, update the feature state of the
+    // previously hovered feature.
+    map.on('mouseleave', 'state-fills', function() {
+        if (hoveredStateId !== null) {
+            map.setFeatureState({ source: 'states', id: hoveredStateId }, { hover: false });
+        }
+        hoveredStateId = null;
+    });
+});
+
 
 // Modal - popup for filtering results
 const filterResults = document.getElementById("filterResults");
@@ -554,4 +679,15 @@ function transformRequest(url, resourceType) {
     return {
         url: isMapboxRequest ? url.replace("?", "?pluginName=finder&") : url,
     };
+}
+var layerList = document.getElementById('menu');
+var inputs = layerList.getElementsByTagName('input');
+
+function switchLayer(layer) {
+    var layerId = layer.target.id;
+    map.setStyle('mapbox://styles/dylanmaxwell/' + layerId);
+}
+
+for (var i = 0; i < inputs.length; i++) {
+    inputs[i].onclick = switchLayer;
 }

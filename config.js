@@ -1,34 +1,14 @@
 const config = {
     style: "mapbox://styles/dylanmaxwell/ckq7g8e1k2rhr17llm91ytvp5",
     accessToken: "pk.eyJ1IjoiZHlsYW5tYXh3ZWxsIiwiYSI6ImNrcTczNGtzNTAwcDYyb3BtdGN3em5ndGsifQ.df72_vr_4lG4QTdcwlXa-g",
-    CSV: "./UNIDOS_Affiliates_TEST.csv",
+    CSV: "https://docs.google.com/spreadsheets/d/1UXT6L0Da3_R77fEn-BqWDSQPCIDKc2sd6cOYoWgxwjE/gviz/tq?tqx=out:csv&sheet=Sheet1",
     center: [-96.164, 38.351],
-    zoom: 4,
+    zoom: 3.5,
     title: "UNIDOS Affiliate Map",
     description: "",
     sideBarInfo: ["affiliate_name", "address", "website"],
     popupInfo: ["affiliate_name"],
     filters: [{
-            type: "dropdown",
-            title: "Affiliate Funding: ",
-            columnHeader: "Value",
-            listItems: [
-                "Under $500k ($731.57)",
-                "$500K -$1M ($1,043.34)",
-                "$1 - $2.5M ($1,217.23)",
-                "$2.5 - $5M ($1,391.13)",
-                "$5 - $10M ($1,622.98)",
-                "$10 - $25M ($2,318.54)",
-                "Over $25M ($2,903.32)",
-            ],
-        },
-        {
-            type: "checkbox",
-            title: "Group Info: ",
-            columnHeader: "group", // Case sensitive - must match spreadsheet entry
-            listItems: ["Group A (FY18)", "Group B (FY19)", "Group C (FY20)", "None"], // Case sensitive - must match spreadsheet entry; This will take up to six inputs but is best used with a maximum of three;
-        },
-        {
             type: "dropdown",
             title: "UNIDOS Affiliate Issues: ",
             columnHeader: "issue_area",
@@ -74,6 +54,26 @@ const config = {
                 "Digital Literacy",
                 "None",
             ],
+        },
+        {
+            type: "dropdown",
+            title: "Affiliate Funding: ",
+            columnHeader: "Value",
+            listItems: [
+                "Under $500k ($731.57)",
+                "$500K -$1M ($1,043.34)",
+                "$1 - $2.5M ($1,217.23)",
+                "$2.5 - $5M ($1,391.13)",
+                "$5 - $10M ($1,622.98)",
+                "$10 - $25M ($2,318.54)",
+                "Over $25M ($2,903.32)",
+            ],
+        },
+        {
+            type: "checkbox",
+            title: "Group Info: ",
+            columnHeader: "group", // Case sensitive - must match spreadsheet entry
+            listItems: ["Group A (FY18)", "Group B (FY19)", "Group C (FY20)", "None"], // Case sensitive - must match spreadsheet entry; This will take up to six inputs but is best used with a maximum of three;
         },
     ],
 };
