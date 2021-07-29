@@ -1,4 +1,3 @@
-/* eslint-disable strict */
 mapboxgl.accessToken = config.accessToken;
 const columnHeaders = config.sideBarInfo;
 
@@ -23,26 +22,15 @@ function flyToLocation(currentFeature) {
     });
 }
 
-
 function createPopup(currentFeature) {
 
-    var description =
-        '<h3>' +
+    var description = `<h3>` +
         currentFeature.properties["affiliate_name"] +
-        '</h3>' +
-        `<h4>` +
-        `<b>` +
-        `Address: ` +
-        `</b>` +
-        currentFeature.properties["address"] + "&nbsp;" + currentFeature.properties["city"] + ",&nbsp;" + currentFeature.properties["state"] + "&nbsp;" + currentFeature.properties["zip"] +
-        `</h4>` +
-        `<h4>` +
-        `<b>` +
-        `Member ID: ` +
-        `</b>` +
+        `</h3><h4><b>Address: </b>` +
+        currentFeature.properties["full_address"] +
+        `</h4><h4><b>Member ID: </b>` +
         currentFeature.properties["member_id"] +
         `</h4>`;
-
 
     const popups = document.getElementsByClassName("mapboxgl-popup");
     /** Check if there is already a popup on the map and if so, remove it */
@@ -51,12 +39,7 @@ function createPopup(currentFeature) {
         .setLngLat(currentFeature.geometry.coordinates)
         .setHTML(description)
         .addTo(map);
-
-
-}
-
-
-
+};
 
 function buildLocationList(locationData) {
     /* Add a new listing section to the sidebar. */
@@ -120,10 +103,6 @@ function buildLocationList(locationData) {
         });
     });
 }
-
-// Build dropdown list function
-// defaultValue - the default option for the dropdown list
-// listItems - the array of filter items
 
 function buildDropDownList(title, listItems) {
     const filtersDiv = document.getElementById("filters");
@@ -431,7 +410,6 @@ var x = document.getElementById("features")
 
 map.on("style.load", function() {
     x.style.visibility = "hidden";
-    // csv2geojson - following the Sheet Mapper tutorial https://www.mapbox.com/impact-tools/sheet-mapper
     console.log("loaded");
     $(document).ready(function() {
         console.log("ready");
@@ -472,64 +450,136 @@ map.on("style.load", function() {
                         data: geojsonData,
                     },
                     paint: {
-                        "circle-radius": 6, // size of circles
-                        "circle-color": "#29602e", // color of circles
+                        "circle-radius": 6,
+                        "circle-color": [
+                            'match', ['get', 'region'],
+                            'California',
+                            '#00ADBE',
+                            'Far West',
+                            '#F05538',
+                            'Southeast',
+                            '#F5852F',
+                            'Texas',
+                            '#FFC81B',
+                            'Northeast',
+                            '#B3D238',
+                            'Midwest',
+                            '#0D53A5',
+                            '#CCC'
+                        ],
                         "circle-stroke-color": "white",
-                        "circle-stroke-width": 2,
-                        "circle-opacity": 0.9,
+                        "circle-stroke-width": 1,
+                        "circle-opacity": 0.7,
                     },
                 });
             },
             'waterway-label'
         );
 
-        function sourceCallback() {
-            if (map.getSource(geojsonData) && map.isSourceLoaded(geojsonData)) {
-                console.log('source loaded!');
-            }
-        }
-        map.on('sourcedata', sourceCallback);
-
         map.on("click", "districts-fill", function(e) {
             const states = map.queryRenderedFeatures(e.point, {
                 layers: ['districts-fill']
             });
+
+
             x.style.visibility = "visible";
 
             if (states.length > 0) {
 
-                document.getElementById('pd').innerHTML = '<img src="user.png" alt="Avatar" class="avatar"></img><h2>District: ' + states[0].properties.district_name + '</h2>' +
-                    '<hr></br><h2 style="text-align: left; margin-left: 10px; font-weight: 700;">Representative Info</h2>' +
-                    '<p style="font-weight: 700";>' + states[0].properties.rep_first_name + ' ' + states[0].properties.rep_last_name + ', ' + states[0].properties.rep_gender + '</p></br>' +
-                    '<p style="font-weight: 700";>' + states[0].properties.rep_party + '</p></br>' +
-                    '<p>' + states[0].properties.rep_phone + '</p></br>' +
-                    '<p>' + states[0].properties.rep_url + '</p></br>' +
-                    '<hr></br>' +
-                    '<h2 style="text-align: left; margin-left: 10px; font-weight: 700;">Senate Info</h2>' +
-                    '<p style="font-weight: 700";>' + states[0].properties.sen_1_first_name + ' ' + states[0].properties.sen_1_last_name + ', ' + states[0].properties.sen_1_gender + '</p></br>' +
-                    '<p style="font-weight: 700";>' + states[0].properties.sen_1_party + '</p></br>' +
-                    '<p>' + states[0].properties.sen_1_phone + '</p></br>' +
-                    '<p>' + states[0].properties.sen_1_url + '</p></br></br>' +
-                    '<p style="font-weight: 700";>' + states[0].properties.sen_2_first_name + ' ' + states[0].properties.sen_2_last_name + ', ' + states[0].properties.sen_2_gender + '</p></br>' +
-                    '<p style="font-weight: 700";>' + states[0].properties.sen_2_party + '</p></br>' +
-                    '<p>' + states[0].properties.sen_2_phone + '</p></br>' +
-                    '<p>' + states[0].properties.sen_2_url + '</p></br>' +
-                    '<hr></br>' +
+                const endpoint = 'https://theunitedstates.io/images/congress/225x275/';
+                const apiKey = 'PiHgOCWadu2hdqmkQGaBmRq39CtXCszpZVOJOeSP';
+                var bioId = states[0].properties.j_rep_bio_id;
+                var s1bioId = states[0].properties.j_sen1_id;
+                var s2bioId = states[0].properties.j_sen2_id;
+                var params = 'access_token=' + apiKey;
+                var url = endpoint + bioId + '.jpg?' + params;
+                var url1 = endpoint + s1bioId + '.jpg?' + params;
+                var url2 = endpoint + s2bioId + '.jpg?' + params;
+
+                /*This is the Rep Image*/
+                var xhr = new XMLHttpRequest();
+                xhr.open("GET", url);
+                xhr.responseType = "blob";
+                xhr.onload = response;
+                xhr.send();
+
+                function response(e) {
+                    var urlCreator = window.URL || window.webkitURL;
+                    var imageUrl = urlCreator.createObjectURL(this.response);
+                    document.querySelector("#image").src = imageUrl;
+                };
+
+                /*This is the Senate 1 Image*/
+                var xhr1 = new XMLHttpRequest();
+                xhr1.open("GET", url1);
+                xhr1.responseType = "blob";
+                xhr1.onload = response1;
+                xhr1.send();
+
+                function response1(x) {
+                    var urlCreator1 = window.URL || window.webkitURL;
+                    var imageUrl1 = urlCreator1.createObjectURL(this.response);
+                    document.querySelector("#sen1").src = imageUrl1;
+                };
+
+                /*This is the Senate 2 Image*/
+                var xhr2 = new XMLHttpRequest();
+                xhr2.open("GET", url2);
+                xhr2.responseType = "blob";
+                xhr2.onload = response2;
+                xhr2.send();
+
+                function response2(y) {
+                    var urlCreator2 = window.URL || window.webkitURL;
+                    var imageUrl2 = urlCreator2.createObjectURL(this.response);
+                    document.querySelector("#sen2").src = imageUrl2;
+                };
+                /*<img id="image"/>*/
+                document.getElementById('pd').innerHTML = '<h2>' + states[0].properties.District + ' Congressional District</h2>' +
+                    '<img id="image"/><p style="font-weight: 900; font-size: 14px; padding-top: 30px;">' + states[0].properties.j_rep_first_name + ' ' + states[0].properties.j_rep_last_name + ', ' +
+                    states[0].properties.j_rep_party + '</p>' +
+                    '<p><img style="width: 12px; vertical-align: middle; padding-bottom: 4px; margin-right: 3px;" src="cursor.png"/><a href="' + states[0].properties.j_rep_url + '">' + states[0].properties.j_rep_url + '</a></p></br>' +
+                    '<p><img style="width: 12px; vertical-align: middle; padding-bottom: 4px; margin-right: 3px;" src="call.png"/><a href="tel:' + states[0].properties.j_rep_phone + '">' + states[0].properties.j_rep_phone + '</a></p></br>' +
+                    '<hr>' +
+
+
+
+
+                    '<h2>Junior Senator</h2><img id="sen1"/>' +
+                    '<p style="font-weight: 700";>' + states[0].properties.j_sen1_first_name + ' ' + states[0].properties.j_sen1_last_name + ', ' + states[0].properties.j_sen1_party + '</p></br>' +
+                    '<p>' + states[0].properties.j_sen1_url + '</p></br>' +
+                    '<p>' + states[0].properties.j_sen1_phone + '</p></br><hr>' +
+
+
+
+
+
+                    '<h2>Senior Senator</h2><img id="sen2"/>' +
+                    '<p style="font-weight: 700";>' + states[0].properties.j_sen2_first_name + ' ' + states[0].properties.j_sen2_last_name + ', ' + states[0].properties.j_sen2_party + '</p></br>' +
+                    '<p>' + states[0].properties.j_sen2_url + '</p></br>' +
+                    '<p>' + states[0].properties.j_sen2_phone + '</p><hr></br>' +
+
+
+
+
+
+
+
                     '<h2 style="text-align: left; margin-left: 10px; font-weight: 700;">Donor Investment</h2>' +
-                    '<p># of Donors: ' + states[0].properties.donor_count + '</p></br>' +
-                    '<p>Total Amount Donated: ' + states[0].properties.donor_value + '</p></br>' +
+                    '<p># of Donors: ' + states[0].properties.j_donor_count + '</p></br>' +
+                    '<p>Total Amount Donated: ' + states[0].properties.j_donor_value + '</p></br>' +
                     '<hr></br>' +
                     '<h2 style="text-align: left; margin-left: 10px; font-weight: 700;">Population #</h2>' +
-                    '<p>Total Population: ' + states[0].properties.total_pop + '</p></br>' +
-                    '<p>Total Latino Pop.: ' + states[0].properties.latino_pop + '</p></br>' +
-                    '<p>Total Eligible Voters: ' + states[0].properties.eligible_voter_pop + '</p></br>' +
-                    '<p>Total Latino Elig. Voters: ' + states[0].properties.latino_eligible_voter_pop + '</p></br>' +
+                    '<p>Total Population: ' + states[0].properties.j_total_pop + '</p></br>' +
+                    '<p>Total Latino Pop.: ' + states[0].properties.j_latino_pop + '</p></br>' +
+                    '<p>Total Eligible Voters: ' + states[0].properties.j_eligible_voter_pop + '</p></br>' +
+                    '<p>Total Latino Elig. Voters: ' + states[0].properties.j_latino_eligible_voter_pop + '</p></br>' +
 
                     '<hr></br>' +
                     '<h2 style="text-align: left; margin-left: 10px; font-weight: 700;">Population %</h2>' +
-                    '<p>% of Pop. Latino: ' + states[0].properties.share_latino_pop * 100 + '%</p></br>' +
-                    '<p>% of Latino Among Eligible Voters: ' + states[0].properties.share_latino_total_eligible_voter_pop * 100 + '%</p></br>' +
-                    '<p>% of Latino Pop. Eligible to Vote: ' + states[0].properties.share_latino_eligible_pop * 100 + '%</p></br>';
+                    '<p>% of Pop. Latino: ' + states[0].properties.j_share_latino_pop * 100 + '%</p></br>' +
+                    '<p>% of Latino Among Eligible Voters: ' + states[0].properties.j_share_latino_total_eligible_voter_pop * 100 + '%</p></br>' +
+                    '<p>% of Latino Pop. Eligible to Vote: ' + states[0].properties.j_share_latino_eligible_pop * 100 + '%</p></br>';
             }
         });
         map.on("click", "locationData", function(e) {
@@ -582,6 +632,9 @@ map.on('style.load', function() {
             ]
         }
     });
+
+
+
 
 
     // When the user moves their mouse over the state-fill layer, we'll update the

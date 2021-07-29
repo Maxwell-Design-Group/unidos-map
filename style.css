@@ -6,11 +6,11 @@
     font-size: 12px;
     font-weight: 700;
     color: white;
-    background-color: #E32124;
+    background-color: #EE3532;
 }
 
 .theme {
-    background-color: #2A395F;
+    background-color: #FFFFFF;
 }
 
 .select {
@@ -37,7 +37,7 @@
 .listings .item .title {
     display: inline-block;
     width: 100%;
-    color: #3e5dac;
+    color: #244baf;
     font-weight: 900!important;
     margin-top: 5px;
     text-decoration: none;
@@ -136,9 +136,10 @@ h1 {
 h2 {
     font: 'Source Sans Pro', 'Helvetica Neue', Sans-serif;
     font-size: medium;
+    font-weight: 900;
     margin: 10px 0;
     text-align: center;
-    color: #E32124;
+    color: #4E5156;
 }
 
 p {
@@ -149,13 +150,15 @@ p {
     margin-left: 15px;
 }
 
+h3 {
+    color: black;
+}
+
 .avatar {
     display: block;
     margin-top: 20px;
     margin-left: auto;
     margin-right: auto;
-    width: 50px;
-    height: 50px;
     border-radius: 50%;
 }
 
@@ -176,38 +179,23 @@ hr {
     z-index: 1;
     top: 10px;
     left: 380px;
-    border-radius: 15px;
+    border-radius: 10px;
     width: 300px;
     border: 1px solid rgba(0, 0, 0, 0.4);
     font-family: 'Open Sans', sans-serif;
 }
 
-#menu a {
-    font-size: 13px;
-    color: #404040;
-    display: block;
-    margin: 0;
-    padding: 0;
-    padding: 10px;
-    text-decoration: none;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.25);
+#sen1,
+#sen2,
+#image {
+    max-width: 80px;
+    max-height: 80px;
+    margin-left: 1.5em;
+    border-radius: 10px;
+    display: inline-block;
+}
+
+#description {
+    color: black;
     text-align: center;
-}
-
-#menu a:last-child {
-    border: none;
-}
-
-#menu a:hover {
-    background-color: #f8f8f8;
-    color: #404040;
-}
-
-#menu a.active {
-    background-color: #3887be;
-    color: #ffffff;
-}
-
-#menu a.active:hover {
-    background: #3074a4;
 }
