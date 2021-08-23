@@ -514,7 +514,7 @@ map.on("style.load", function() {
                     '<p># of Donors: ' + states[0].properties.j_donor_count + '</p></br>' +
                     '<p>Total Amount Donated: ' + states[0].properties.j_donor_value + '</p></br>';
                 $('img').on('error', function() {
-                    $(this).attr('src', '/user.png'); // show a fallback image if there is an error
+                    $(this).attr('src', 'user.png'); // show a fallback image if there is an error
                 });
             }
         });
