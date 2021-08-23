@@ -1,6 +1,9 @@
 mapboxgl.accessToken = config.accessToken;
 const columnHeaders = config.sideBarInfo;
 
+const selectFilters = [];
+const checkboxFilters = [];
+
 let geojsonData = {};
 const filteredGeojson = {
     type: "FeatureCollection",
@@ -18,13 +21,13 @@ const map = new mapboxgl.Map({
 function flyToLocation(currentFeature) {
     map.flyTo({
         center: currentFeature,
-        zoom: 8,
+        zoom: 7,
     });
-}
+};
 
 function createPopup(currentFeature) {
 
-    var description = `<h3>` +
+    var description = `<h3 style="background-color: black; color: white;">` +
         currentFeature.properties["affiliate_name"] +
         `</h3><h4><b>Address: </b>` +
         currentFeature.properties["full_address"] +
@@ -35,74 +38,22 @@ function createPopup(currentFeature) {
     const popups = document.getElementsByClassName("mapboxgl-popup");
     /** Check if there is already a popup on the map and if so, remove it */
     if (popups[0]) popups[0].remove();
-    const popup = new mapboxgl.Popup({ closeOnClick: true })
+    new mapboxgl.Popup({ closeOnClick: true })
         .setLngLat(currentFeature.geometry.coordinates)
         .setHTML(description)
         .addTo(map);
 };
 
-function buildLocationList(locationData) {
-    /* Add a new listing section to the sidebar. */
-    const listings = document.getElementById("listings");
-    listings.innerHTML = "";
-    locationData.features.forEach(function(location, i) {
-        const prop = location.properties;
+function buildLocationList() {
 
-        const listing = listings.appendChild(document.createElement("div"));
-        /* Assign a unique `id` to the listing. */
-        listing.id = "listing-" + prop.id;
+    const listing = listings.appendChild(document.createElement("div"));
+    const link = listing.appendChild(document.createElement("button"));
 
-        /* Assign the `item` class to each listing for styling. */
-        listing.className = "item";
-
-        /* Add the link to the individual listing created above. */
-        const link = listing.appendChild(document.createElement("button"));
-        link.className = "title";
-        link.id = "link-" + prop.id;
-        link.innerHTML =
-            '<h1 style="line-height: 1; text-align:left;">' + prop[columnHeaders[0]] + "</h1>";
-
-        /* Add details to the individual listing. */
-        const details = listing.appendChild(document.createElement("div"));
-        details.className = "content";
-
-        for (let i = 1; i < columnHeaders.length; i++) {
-            const div = document.createElement("div");
-            div.innerText += prop[columnHeaders[i]];
-            div.className;
-            details.appendChild(div);
-        }
-
-        link.addEventListener("click", function() {
-            const clickedListing = location.geometry.coordinates;
-            flyToLocation(clickedListing);
-            createPopup(location);
-
-            const activeItem = document.getElementsByClassName("active");
-            if (activeItem[0]) {
-                activeItem[0].classList.remove("active");
-            }
-            this.parentNode.classList.add("active");
-
-            const divList = document.querySelectorAll(".content");
-            const divCount = divList.length;
-            for (i = 0; i < divCount; i++) {
-                divList[i].style.maxHeight = null;
-            }
-
-            for (let i = 0; i < geojsonData.features.length; i++) {
-                this.parentNode.classList.remove("active");
-                this.classList.toggle("active");
-                const content = this.nextElementSibling;
-                if (content.style.maxHeight) {
-                    content.style.maxHeight = null;
-                } else {
-                    content.style.maxHeight = content.scrollHeight + "px";
-                }
-            }
-        });
+    link.addEventListener("click", function() {
+        createPopup(location);
     });
 }
+
 
 function buildDropDownList(title, listItems) {
     const filtersDiv = document.getElementById("filters");
@@ -136,10 +87,8 @@ function buildDropDownList(title, listItems) {
         dropDown.appendChild(el1);
     }
     filtersDiv.appendChild(mainDiv);
-}
+};
 
-// Build checkbox function
-// listItems - the array of filter items
 function buildCheckbox(title, listItems) {
     const filtersDiv = document.getElementById("filters");
     const mainDiv = document.createElement("div");
@@ -189,10 +138,7 @@ function buildCheckbox(title, listItems) {
         formatcontainer.appendChild(container);
     }
     filtersDiv.appendChild(mainDiv);
-}
-
-const selectFilters = [];
-const checkboxFilters = [];
+};
 
 function createFilterObject(filterSettings) {
     filterSettings.forEach(function(filter) {
@@ -214,7 +160,7 @@ function createFilterObject(filterSettings) {
             selectFilters.push(keyValues);
         }
     });
-}
+};
 
 function applyFilters() {
     const filterForm = document.getElementById("filters");
@@ -316,7 +262,7 @@ function applyFilters() {
         map.getSource("locationData").setData(filteredGeojson);
         buildLocationList(filteredGeojson);
     });
-}
+};
 
 function filters(filterSettings) {
     filterSettings.forEach(function(filter) {
@@ -326,7 +272,7 @@ function filters(filterSettings) {
             buildDropDownList(filter.title, filter.listItems);
         }
     });
-}
+};
 
 function removeFilters() {
     let input = document.getElementsByTagName("input");
@@ -346,14 +292,14 @@ function removeFilters() {
 
     map.getSource("locationData").setData(geojsonData);
     buildLocationList(geojsonData);
-}
+};
 
 function removeFiltersButton() {
     const removeFilter = document.getElementById("removeFilters");
     removeFilter.addEventListener("click", function() {
         removeFilters();
     });
-}
+};
 
 createFilterObject(config.filters);
 applyFilters();
@@ -481,11 +427,8 @@ map.on("style.load", function() {
                 layers: ['districts-fill']
             });
 
-
             x.style.visibility = "visible";
-
             if (states.length > 0) {
-
                 const endpoint = 'https://theunitedstates.io/images/congress/225x275/';
                 const apiKey = 'PiHgOCWadu2hdqmkQGaBmRq39CtXCszpZVOJOeSP';
                 var bioId = states[0].properties.j_rep_bio_id;
@@ -535,6 +478,7 @@ map.on("style.load", function() {
                     document.querySelector("#sen2").src = imageUrl2;
                 };
                 /*<img id="image"/>*/
+
                 document.getElementById('pd').innerHTML = '<h2>' + states[0].properties.District + ' Congressional District</h2>' +
                     '<img id="image"/><p style="font-weight: 900; font-size: 14px; padding-top: 30px;">' + states[0].properties.j_rep_first_name + ' ' + states[0].properties.j_rep_last_name + ', ' +
                     states[0].properties.j_rep_party + '</p>' +
@@ -542,33 +486,18 @@ map.on("style.load", function() {
                     '<p><img style="width: 12px; vertical-align: middle; padding-bottom: 4px; margin-right: 3px;" src="call.png"/><a href="tel:' + states[0].properties.j_rep_phone + '">' + states[0].properties.j_rep_phone + '</a></p></br>' +
                     '<hr>' +
 
-
-
-
                     '<h2>Junior Senator</h2><img id="sen1"/>' +
                     '<p style="font-weight: 700";>' + states[0].properties.j_sen1_first_name + ' ' + states[0].properties.j_sen1_last_name + ', ' + states[0].properties.j_sen1_party + '</p></br>' +
                     '<p>' + states[0].properties.j_sen1_url + '</p></br>' +
                     '<p>' + states[0].properties.j_sen1_phone + '</p></br><hr>' +
 
-
-
-
-
                     '<h2>Senior Senator</h2><img id="sen2"/>' +
                     '<p style="font-weight: 700";>' + states[0].properties.j_sen2_first_name + ' ' + states[0].properties.j_sen2_last_name + ', ' + states[0].properties.j_sen2_party + '</p></br>' +
                     '<p>' + states[0].properties.j_sen2_url + '</p></br>' +
-                    '<p>' + states[0].properties.j_sen2_phone + '</p><hr></br>' +
+                    '<p>' + states[0].properties.j_sen2_phone + '</p><hr></br>';
 
 
-
-
-
-
-
-                    '<h2 style="text-align: left; margin-left: 10px; font-weight: 700;">Donor Investment</h2>' +
-                    '<p># of Donors: ' + states[0].properties.j_donor_count + '</p></br>' +
-                    '<p>Total Amount Donated: ' + states[0].properties.j_donor_value + '</p></br>' +
-                    '<hr></br>' +
+                document.getElementById('data-card').innerHTML = '<h2>' + states[0].properties.District +
                     '<h2 style="text-align: left; margin-left: 10px; font-weight: 700;">Population #</h2>' +
                     '<p>Total Population: ' + states[0].properties.j_total_pop + '</p></br>' +
                     '<p>Total Latino Pop.: ' + states[0].properties.j_latino_pop + '</p></br>' +
@@ -579,7 +508,14 @@ map.on("style.load", function() {
                     '<h2 style="text-align: left; margin-left: 10px; font-weight: 700;">Population %</h2>' +
                     '<p>% of Pop. Latino: ' + states[0].properties.j_share_latino_pop * 100 + '%</p></br>' +
                     '<p>% of Latino Among Eligible Voters: ' + states[0].properties.j_share_latino_total_eligible_voter_pop * 100 + '%</p></br>' +
-                    '<p>% of Latino Pop. Eligible to Vote: ' + states[0].properties.j_share_latino_eligible_pop * 100 + '%</p></br>';
+                    '<p>% of Latino Pop. Eligible to Vote: ' + states[0].properties.j_share_latino_eligible_pop * 100 + '%</p></br>' +
+                    '<hr></br>' +
+                    '<h2 style="text-align: left; margin-left: 10px; font-weight: 700;">Donor Investment</h2>' +
+                    '<p># of Donors: ' + states[0].properties.j_donor_count + '</p></br>' +
+                    '<p>Total Amount Donated: ' + states[0].properties.j_donor_value + '</p></br>';
+                $('img').on('error', function() {
+                    $(this).attr('src', '/user.png'); // show a fallback image if there is an error
+                });
             }
         });
         map.on("click", "locationData", function(e) {
@@ -607,7 +543,9 @@ map.on("style.load", function() {
 var hoveredStateId = null;
 var zoomThreshold = 5.2;
 var minizoomi = 5.3;
-
+var popup = new mapboxgl.Popup({
+    closeButton: false
+});
 
 map.on('style.load', function() {
     map.addSource('distro', {
@@ -631,11 +569,7 @@ map.on('style.load', function() {
                 0,
             ]
         }
-    });
-
-
-
-
+    }, 'waterway-label');
 
     // When the user moves their mouse over the state-fill layer, we'll update the
     // feature state for the feature under the mouse.
@@ -647,16 +581,22 @@ map.on('style.load', function() {
             hoveredStateId = e.features[0].id;
             map.setFeatureState({ source: 'distro', id: hoveredStateId }, { hover: true });
         }
+        var feature = e.features[0];
+        popup.setLngLat(e.lngLat)
+            .setText(feature.properties.District)
+            .addTo(map);
     });
 
     // When the mouse leaves the state-fill layer, update the feature state of the
     // previously hovered feature.
     map.on('mouseleave', 'district-fills', function() {
+        popup.remove();
         if (hoveredStateId !== null) {
             map.setFeatureState({ source: 'distro', id: hoveredStateId }, { hover: false });
         }
         hoveredStateId = null;
     });
+
 });
 
 map.on('style.load', function() {
@@ -738,6 +678,47 @@ var inputs = layerList.getElementsByTagName('input');
 
 function switchLayer(layer) {
     var layerId = layer.target.id;
+    var latinoVoters = document.getElementById('latino-voters');
+    var allVoters = document.getElementById('all-voters');
+    var partyLegend = document.getElementById('party-legend');
+
+    if (layerId === 'ckq7g8e1k2rhr17llm91ytvp5') { //None
+        map.setZoom(3.8);
+        map.setPitch(0);
+        latinoVoters.style.display = 'none';
+        allVoters.style.display = 'none';
+        partyLegend.style.display = 'none';
+    } else if (layerId === 'ckr6cm0u20vz818qiwjcth186') { //Donors
+        map.setZoom(4);
+        map.setPitch(40);
+        latinoVoters.style.display = 'none';
+        allVoters.style.display = 'none';
+        partyLegend.style.display = 'none';
+    } else if (layerId === 'ckr3i4wkk0sur1anpsgivu5p3') { //Latino Voters
+        map.setZoom(4);
+        map.setPitch(0);
+        latinoVoters.style.display = 'block';
+        allVoters.style.display = 'none';
+        partyLegend.style.display = 'none';
+    } else if (layerId === 'ckr53ol0z0oql17mx36iuqm0z') { //All Voters
+        map.setZoom(4);
+        map.setPitch(0);
+        latinoVoters.style.display = 'none';
+        allVoters.style.display = 'block';
+        partyLegend.style.display = 'none';
+    } else if (layerId === 'ckr2y62ng1ntg18pd6rtrgdc1') { //Party Affiliation
+        map.setZoom(4);
+        map.setPitch(0);
+        latinoVoters.style.display = 'none';
+        allVoters.style.display = 'none';
+        partyLegend.style.display = 'block';
+    } else {
+        map.setZoom(4);
+        map.setPitch(0);
+        latinoVoters.style.display = 'none';
+        allVoters.style.display = 'none';
+        partyLegend.style.display = 'none';
+    }
     map.setStyle('mapbox://styles/dylanmaxwell/' + layerId);
 }
 

@@ -35,15 +35,22 @@
                         <p id='description' class='txt-s py12 none block-ml'>
                         </p>
                         <div class="flex-parent flex-parent--center-main relative-ml absolute right top mt0-ml mt6">
-                            <button id='filterResults' class='txt-bold btn btn--stroke mr0-ml mr12 px18-ml px6'>
+                            <button id='filterResults' class='txt-bold btn mr0-ml mr12 px18-ml px6'>
                                 <svg class='icon inline-block align-middle h24 w24'>
                                     <use xlink:href='#icon-filter' /></svg>
                                 <p class="inline-block-ml align-middle remove none">Show Filters</p>
                             </button>
+
+                        </div>
+                        </br>
+                        <hr>
+                        <div id='data-card'>
+                            <p></p>
                         </div>
                     </div>
                     <div id="listings" class="flex-child viewport-twothirds py12 px12 listings scroll-auto"></div>
                     <div id="menu">
+                        <h2 style="text-align: left;">Map Views</h2>
                         <input id="ckq7g8e1k2rhr17llm91ytvp5" type="radio" name="rtoggle" value="None" checked="checked">
                         <label for="ckq7g8e1k2rhr17llm91ytvp5">None</label>
                         <input id="ckr3i4wkk0sur1anpsgivu5p3" type="radio" name="rtoggle" value="Latino Voters">
@@ -65,6 +72,35 @@
                 </div>
             </div>
         </div>
+        <div id="legend" class="map-overlay">
+            <h2 style="text-align: left;">Affiliate Regions</h2>
+            <div><span style="background-color: #00ADBE"></span>California</div>
+            <div><span style="background-color: #F05538"></span>Far West</div>
+            <div><span style="background-color: #F5852F"></span>Southeast</div>
+            <div><span style="background-color: #FFC81B"></span>Texas</div>
+            <div><span style="background-color: #B3D238"></span>Northeast</div>
+            <div><span style="background-color: #0D53A5"></span>Midwest</div>
+        </div>
+        <div id="latino-voters" class="view-legend">
+            <div><span style="background-color: #eef91a"></span>>50,000</div>
+            <div><span style="background-color: #e89c4f"></span>50,000</div>
+            <div><span style="background-color: #d36d64"></span>100,000</div>
+            <div><span style="background-color: #b9467a"></span>200,000</div>
+            <div><span style="background-color: #67009e"></span>357,000</div>
+        </div>
+        <div id="all-voters" class="view-legend">
+            <div><span style="background-color: #eef91a"></span>>100,000</div>
+            <div><span style="background-color: #e89c4f"></span>100,000</div>
+            <div><span style="background-color: #d36d64"></span>300,000</div>
+            <div><span style="background-color: #b9467a"></span>500,000</div>
+            <div><span style="background-color: #67009e"></span>650,000</div>
+        </div>
+        <div id="party-legend" class="view-legend">
+            <div><span style="background-color: #0015bc"></span>Democratic</div>
+            <div><span style="background-color: #e00000"></span>Republican</div>
+            <div><span style="background-color: #c45fc4"></span>Split</div>
+        </div>
+
         <div id='modal' class='absolute top right bottom left scroll-auto hide-visually flex-parent flex-parent--center-main mt120-ml'>
             <div class='pt36'>
                 <div class='flex-child bg-white round relative scroll-auto'>
