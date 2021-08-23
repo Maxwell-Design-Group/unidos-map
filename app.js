@@ -512,7 +512,10 @@ map.on("style.load", function() {
                     '<hr></br>' +
                     '<h2 style="text-align: left; margin-left: 10px; font-weight: 700;">Donor Investment</h2>' +
                     '<p># of Donors: ' + states[0].properties.j_donor_count + '</p></br>' +
-                    '<p>Total Amount Donated: ' + states[0].properties.j_donor_value + '</p></br>';
+                    '<p>Total Amount Donated: ' + states[0].properties.j_donor_value + '</p></br>' +
+                    '<hr></br>' +
+                    '<h2 style="text-align: left; margin-left: 10px; font-weight: 700;">Affiliate Issue Areas</h2>' +
+                    '<p>' + states[0].properties.j_issue_area + '</p>';
                 $('img').on('error', function() {
                     $(this).attr('src', 'https://github.com/Maxwell-Design-Group/unidos-map/blob/cf1d6e51d89788ea9ce2377d0edc2e32069efb8a/user.PNG'); // show a fallback image if there is an error
                 });
